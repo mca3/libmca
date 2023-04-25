@@ -1,6 +1,6 @@
 CC = cc
 CFLAGS ?= -std=c99
-MODULES = strmap vec
+MODULES = ev strmap vec
 
 all: libmca.a test
 
