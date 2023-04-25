@@ -120,8 +120,6 @@ mca_ev_new(struct mca_ev **ev)
 		return -1;
 	memset(nev, 0, sizeof(*nev));
 
-	nev->safe = 1;
-
 	// Allocate the pfd array.
 	if (ensure(nev, MCA_EV_INIT_SIZE) == -1) {
 		free(nev);
@@ -180,6 +178,11 @@ mca_ev_append(struct mca_ev *ev, int fd, int flags)
  * "dead," i.e. poll(2) says that the file descriptor has entered an error
  * state.
  *
+ * Note that calling this guarantees that you are going to miss events for at
+ * least one file descriptor as in normal usage this method is only called
+ * during readable and writable events, and the handlers for those events are
+ * called from an iteration over all its known file descriptors.
+ *
  * This still calls on_remove.
  */
 void
@@ -196,9 +199,6 @@ mca_ev_remove(struct mca_ev *ev, int fd)
 
 	ev->len--;
 	memmove(ev->pfds + i, ev->pfds + i + 1, (ev->len - i)*sizeof(*pfd));
-
-	// Tell mca_ev_poll that it should reiterate over pollfds.
-	ev->safe = 0;
 }
 
 /* Sets flags on a file descriptor.

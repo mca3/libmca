@@ -35,8 +35,6 @@ struct mca_ev {
 
 	void *userdata;
 
-	int safe;
-
 	int (*on_readable)(struct mca_ev *ev, int fd, void *userdata);
 	int (*on_writable)(struct mca_ev *ev, int fd, void *userdata);
 	int (*on_remove)(struct mca_ev *ev, int fd, void *userdata);
